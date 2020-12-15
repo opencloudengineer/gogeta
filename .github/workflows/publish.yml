@@ -1,0 +1,49 @@
+name: Build Tag & Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-tag-release:
+    strategy:
+      matrix:
+        go-version: [ 1.15.x ]
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-commit: "true"
+          output-file: "false"
+
+      - name: Generate Binaries
+        run: bash ./.github/build.sh
+        env:
+          VERSION: ${{ steps.changelog.outputs.tag }}
+
+      - name: Release Binaries
+        env:
+          TAG: ${{ steps.changelog.outputs.tag }}
+          MSG: ${{ steps.changelog.outputs.clean_changelog }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          assets=()
+          for asset in ./bin/gogeta*; do
+            assets+=("-a" "$asset")
+          done
+          echo -e "$TAG\n\n$MSG" | hub release create "${assets[@]}" -F- "$TAG"

@@ -1,0 +1,6 @@
+tasks:
+  - before: >
+      brew install hadolint;
+      ( cd && go get github.com/jessfraz/dockfmt ) ;
+    init: go get -v ./...
+    command: go build .
