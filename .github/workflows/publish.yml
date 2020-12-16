@@ -37,6 +37,7 @@ jobs:
           VERSION: ${{ steps.changelog.outputs.tag }}
 
       - name: Release Binaries
+        if: ${{ steps.changelog.outputs.tag }}
         env:
           TAG: ${{ steps.changelog.outputs.tag }}
           MSG: ${{ steps.changelog.outputs.clean_changelog }}
