@@ -1,22 +1,27 @@
 #!/bin/bash
-echo "Building app for Version : ${VERSION} && Git Commit SHA : ${GITHUB_SHA}"
+set -xeuo pipefail
 
-set -x
+echo "Building on platform with OS: $(go env GOOS) & Arch: $(go env GOARCH)"
+echo "Building app for Version : ${VERSION:=$(git describe --tags)} && Git Commit SHA : ${GITHUB_SHA:=$(git rev-parse HEAD)}"
 
 export GO111MODULE=on
 export CGO_ENABLED=0
 
 go get ./...
-
 go vet ./...
 
 mkdir -p ./bin
 
-LDFLAGS="-s -w -X github.com/opencloudengineer/gogeta/cmd.Version=${VERSION} -X github.com/opencloudengineer/gogeta/cmd.GitCommit=${GITHUB_SHA}"
-FLAGS='-a -installsuffix cgo -o'
-BUILD='go build -ldflags'
+LDFLAGS="-s -w -X 'github.com/opencloudengineer/gogeta/cmd.Version=${VERSION}' -X 'github.com/opencloudengineer/gogeta/cmd.GitCommit=${GITHUB_SHA}'"
 
-GOOS=windows ${BUILD} "${LDFLAGS}" ${FLAGS} ./bin/gogeta-windows-amd64.exe
-GOOS=darwin ${BUILD} "${LDFLAGS}" ${FLAGS} ./bin/gogeta-darwin-amd64
-GOOS=linux ${BUILD} "${LDFLAGS}" ${FLAGS} ./bin/gogeta-linux-amd64
-GOOS=linux GOARCH=arm64 ${BUILD} "${LDFLAGS}" ${FLAGS} ./bin/gogeta-linux-arm64
+function buildFor() {
+  GOOS="${1}" GOARCH="${2}" go build -ldflags="${LDFLAGS}" -a -installsuffix cgo -o "./bin/gogeta-${1}-${2}"
+}
+
+buildFor windows amd64
+buildFor darwin amd64
+buildFor linux amd64
+buildFor linux arm64
+
+# add .exe extension to windows binary
+mv ./bin/gogeta-windows-amd64{,.exe}

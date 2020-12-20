@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	Version   string
+	Version   string = "Dev"
 	GitCommit string
 )
 
@@ -19,12 +19,8 @@ func AppVersion() *cobra.Command {
 		SilenceUsage: false,
 	}
 	command.Run = func(cmd *cobra.Command, args []string) {
-		if len(Version) == 0 {
-			fmt.Println("Version: dev")
-		} else {
-			fmt.Println("Version:", Version)
-		}
-		fmt.Println("Git Commit:", GitCommit)
+		fmt.Println("Version :", Version)
+		fmt.Println("Git Commit :", GitCommit)
 	}
 	return command
 }

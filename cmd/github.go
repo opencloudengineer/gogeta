@@ -12,26 +12,29 @@ import (
 
 func Github() *cobra.Command {
 
+	example := `gogeta github github.com/GoogleContainerTools/skaffold
+gogeta github /stedolan/jq -m linux64
+gogeta github aquasecurity/trivy -m 64bit.deb
+gogeta github koalaman/shellcheck -m linux.x86_64
+gogeta github https://github.com/starship/starship -m linux-gnu`
+
 	var command = &cobra.Command{
 		Use:   "github",
 		Short: `Fetch Github Release(s)`,
-		Long:  `Fetch Github Release(s)`,
-		Example: `gogeta github github.com/GoogleContainerTools/skaffold
-gogeta github /stedolan/jq -m linux64
-gogeta github aquasecurity/trivy -m 64bit.deb
-gogeta github helm/helm -m linux-amd64
-gogeta github https://github.com/starship/starship -m linux-gnu`,
+		Long: `To Fetch a Github Release
+Repository URL is a required argument for the github command`,
+		Example:      example,
 		SilenceUsage: true,
-		Aliases:      []string{"gh"},
+		Aliases:      []string{"gh", "hub"},
 	}
 
-	command.Flags().StringP("match", "m", "", `Download release matching a specific pattern.
-If no pattern is passed, then all releases are fetched.`)
+	command.Flags().StringP("match", "m", "", `download release matching a specific pattern.
+if no pattern is passed, then all releases are fetched.`)
 
 	command.RunE = func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 
-			fmt.Println("Pass Repo Address")
+			cmd.Help()
 			return nil
 		}
 
