@@ -11,7 +11,7 @@ func main() {
 	Version := cmd.AppVersion()
 	Github := cmd.Github()
 	var rootCmd = &cobra.Command{
-		Use: "gogeta",
+		Use:   "gogeta",
 		Short: "Go Get That App",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Help()

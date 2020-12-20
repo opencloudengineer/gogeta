@@ -9,8 +9,8 @@ jobs:
   build-tag-release:
     strategy:
       matrix:
-        go-version: [ 1.15.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.15.x]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -32,11 +32,12 @@ jobs:
           output-file: "false"
 
       - name: Generate Binaries
-        run: bash ./.github/build.sh
+        run: ./.github/build.sh
         env:
           VERSION: ${{ steps.changelog.outputs.tag }}
 
       - name: Release Binaries
+        if: ${{ steps.changelog.outputs.tag }}
         env:
           TAG: ${{ steps.changelog.outputs.tag }}
           MSG: ${{ steps.changelog.outputs.clean_changelog }}
