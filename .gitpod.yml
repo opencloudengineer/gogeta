@@ -1,6 +1,9 @@
 tasks:
   - before: >
-      brew install hadolint;
+      brew install hadolint ;
+      brew install shfmt ;
+      brew install shellcheck ;
+      npm install -g prettier ;
       ( cd && go get github.com/jessfraz/dockfmt ) ;
     init: go get -v ./...
     command: go build .
