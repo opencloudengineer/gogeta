@@ -10,6 +10,7 @@ func main() {
 
 	Version := cmd.AppVersion()
 	Github := cmd.Github()
+	Gitlab := cmd.Gitlab()
 	var rootCmd = &cobra.Command{
 		Use:   "gogeta",
 		Short: "Go Get That App",
@@ -19,7 +20,7 @@ func main() {
 	}
 	rootCmd.AddCommand(Github)
 	rootCmd.AddCommand(Version)
-
+	rootCmd.AddCommand(Gitlab)
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
